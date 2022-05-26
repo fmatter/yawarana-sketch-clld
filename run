@@ -1,4 +1,4 @@
 #!/bin/bash
 # set -e
 pip3 install -e .
-pserve development.ini
+python3 runapp.py
