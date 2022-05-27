@@ -7,6 +7,6 @@ Most of the heavy lifting is done by the following plugins:
 * [clld-corpus-plugin](https://github.com/fmatter/clld-corpus-plugin)
 * [clld-markdown-plugin](https://github.com/clld/clld-markdown-plugin)
 
-The app itself has additional `Document` and `Phoneme` models, as well as [some CSS](blob/main/yawarana_grammar/static/project.css) and [JS](blob/main/yawarana_grammar/static/project.js).
+The app itself has additional `Document` and `Phoneme` models, as well as [some CSS](yawarana_grammar/static/project.css) and [JS](yawarana_grammar/static/project.js).
 
 The app can be viewed [here](fl.mt/yawarana-sketch).
