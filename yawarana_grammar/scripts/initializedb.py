@@ -27,12 +27,17 @@ import re
 
 def main(args):
 
+    ds = Dataset.from_metadata(
+        "/home/florianm/Dropbox/research/cariban/yawarana/yaw_cldf/cldf/metadata.json"
+    )
+
+    print(ds.version)
     data = Data()
     dataset = data.add(
         common.Dataset,
         yawarana_grammar.__name__,
         id=yawarana_grammar.__name__,
-        name="A digital grammar sketch of Yawarana",
+        name="A digital sketch grammar of Yawarana",
         domain="fl.mt/yawarana-sketch",
         contact="florianmatter@gmail.com",
         publisher_name="",
@@ -64,10 +69,6 @@ def main(args):
     dataset.editors.append(common.Editor(contributor=fm, ord=1, primary=True))
     dataset.editors.append(common.Editor(contributor=nc, ord=2, primary=True))
     dataset.editors.append(common.Editor(contributor=sg, ord=3, primary=True))
-
-    ds = Dataset.from_metadata(
-        "/home/florianm/Dropbox/research/cariban/yawarana/yaw_cldf/cldf/metadata.json"
-    )
 
     print("Sources")
     for rec in bibtex.Database.from_file(ds.bibpath):
