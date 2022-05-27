@@ -31,7 +31,6 @@ def main(args):
         "/home/florianm/Dropbox/research/cariban/yawarana/yaw_cldf/cldf/metadata.json"
     )
 
-    print(ds.version)
     data = Data()
     dataset = data.add(
         common.Dataset,

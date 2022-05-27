@@ -1,6 +1,5 @@
 function number_examples() {
     var examples = document.querySelectorAll("li.example");
-    var exrefs = document.querySelectorAll("a.exref");
     for (var exc = 0; exc < examples.length; exc++) {
         ex = examples[exc]
         ex.setAttribute("value", exc + 1)
@@ -12,6 +11,8 @@ function number_examples() {
             }
         }
     }
+
+    var exrefs = document.querySelectorAll("a.exref");
     exrefs.forEach(function(x, i) {
         exid = x.getAttribute("exid")
         x.setAttribute("href", "#" + exid)
