@@ -255,7 +255,7 @@ def main(args):
     content_dic = {}
     for (i, part) in enumerate(parts):
         title, content = part.split("\n", 1)
-        tag = re.findall("#(.*?)'", title)
+        tag = re.findall("{#(.*?)}", title)
         title = title.split("{#")[0].strip()
         if len(tag) == 0:
             tag = slugify(title)
@@ -263,21 +263,23 @@ def main(args):
             tag = tag[0]
         content_dic[tag] = {"title": title, "content": f"<a id='{tag}'></a>" + content}
 
-        tags = re.findall("<a id='(.*?)'></a>", content_dic[tag]["content"])
-        for subtag in tags:
+        tags = re.findall("{#(.*?)}", content_dic[tag]["content"])
+        table_tags = re.findall("<div class='caption table' id='(.*?)'>", content_dic[tag]["content"])
+        for subtag in tags + table_tags:
             if subtag in tag_dic:
                 print(f"duplicate tag {subtag} in {tag}: {tag_dic[subtag]}")
             tag_dic[subtag] = tag
+        tag_dic[tag] = tag
 
-    # for tag in content_dic.keys():
-    #     refs = re.findall(r"<a href='#(.*?)' .*?</a>", tent)
-    #     for ref in refs:
-    #         if tag_dic[ref] != tag:
-    #             content_dic[tag]["content"] = re.sub(
-    #                 rf"<a href='#{ref}'.*?</a>",
-    #                 f"[crossref](ChapterTable?_anchor={ref}#cldf:{tag_dic[ref]})",
-    #                 content_dic[tag]["content"],
-    #             )
+    for tag in content_dic.keys():
+        refs = re.findall(r"<a href='#(.*?)' .*?</a>", tent)
+        for ref in refs:
+            if tag_dic[ref] != tag:
+                content_dic[tag]["content"] = re.sub(
+                    rf"<a href='#{ref}'.*?</a>",
+                    f"[crossref](ChapterTable?_anchor={ref}#cldf:{tag_dic[ref]})",
+                    content_dic[tag]["content"],
+                )
 
     for i, (tag, doc_data) in enumerate(content_dic.items()):
         data.add(
