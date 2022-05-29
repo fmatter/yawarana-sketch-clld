@@ -56,15 +56,9 @@ def main(args):
         url="https://fl.mt",
     )
 
-    nc = common.Contributor(
-        id="nc",
-        name="Natalia Cáceres Arandia",
-    )
+    nc = common.Contributor(id="nc", name="Natalia Cáceres Arandia")
 
-    sg = common.Contributor(
-        id="sg",
-        name="Spike Gildea",
-    )
+    sg = common.Contributor(id="sg", name="Spike Gildea")
     dataset.editors.append(common.Editor(contributor=fm, ord=1, primary=True))
     dataset.editors.append(common.Editor(contributor=nc, ord=2, primary=True))
     dataset.editors.append(common.Editor(contributor=sg, ord=3, primary=True))
@@ -136,7 +130,7 @@ def main(args):
 
     print("Sentences")
     for ex in ds.iter_rows("ExampleTable"):
-        data.add(
+        new_ex = data.add(
             common.Sentence,
             ex["ID"],
             id=ex["ID"],
@@ -147,12 +141,21 @@ def main(args):
             language=data["Language"][ex["Language_ID"]],
             comment=ex["Comment"],
         )
-        data.add(
-            TextSentence,
-            ex["ID"],
-            sentence=data["Sentence"][ex["ID"]],
-            text=data["Text"][ex["Text_ID"]],
-        )
+        if ex["Text_ID"] != None:
+            data.add(
+                TextSentence,
+                ex["ID"],
+                sentence=new_ex,
+                text=data["Text"][ex["Text_ID"]],
+            )
+        elif ex["Source"] != None:
+            bibkey, pages = Sources.parse(ex["Source"][0])
+            source = data["Source"][bibkey]
+            DBSession.add(
+                common.SentenceReference(
+                    sentence=new_ex, source=source, key=source.id, description=pages
+                )
+            )
 
     print("Phonemes!")
     phoneme_dict = {}
@@ -264,7 +267,9 @@ def main(args):
         content_dic[tag] = {"title": title, "content": f"<a id='{tag}'></a>" + content}
 
         tags = re.findall("{#(.*?)}", content_dic[tag]["content"])
-        table_tags = re.findall("<div class='caption table' id='(.*?)'>", content_dic[tag]["content"])
+        table_tags = re.findall(
+            "<div class='caption table' id='(.*?)'>", content_dic[tag]["content"]
+        )
         for subtag in tags + table_tags:
             if subtag in tag_dic:
                 print(f"duplicate tag {subtag} in {tag}: {tag_dic[subtag]}")

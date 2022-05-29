@@ -9,6 +9,7 @@ from clldutils.svg import pie, icon, data_url
 from yawarana_grammar import models, interfaces
 from yawarana_grammar.adapters import PdfDownload
 
+
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
