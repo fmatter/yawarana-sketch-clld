@@ -30,7 +30,6 @@ function number_examples() {
 
 
 function get_example_marker(exid) {
-    console.log(exid)
     ex = document.getElementById(exid)
     parent = ex.parentElement
     if (parent.getAttribute("class") == "subexample") {
@@ -71,7 +70,6 @@ function number_sections(){
         heading.textContent = prefix + number + ". " + heading.textContent
         // reset the smaller counters
         reached = false;
-        console.log(heading)
         stored[heading.id] = prefix + number
         levels.forEach(function(level_comp, j) {
             if (reached){
@@ -104,8 +102,6 @@ function number_captions(){
         });
     });
     var refs = document.querySelectorAll("a.crossref");
-    console.log(refs)
-    console.log(stored)
     refs.forEach(function(ref, i) {
         ref.textContent = stored[ref.id]
     })
