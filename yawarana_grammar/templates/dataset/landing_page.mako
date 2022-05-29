@@ -36,6 +36,6 @@ All of the preceding links lead to detail views of these entities, with informat
 #### The grammar
 ...is under construction.
 The text is written with [pylingdocs](https://github.com/fmatter/pylingdocs), and is available as individual chapters under [documents](documents).
-
+A PDF version can be found [here](download).
 
 """)[0]|n}

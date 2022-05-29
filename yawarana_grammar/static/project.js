@@ -101,8 +101,11 @@ function number_captions(){
             }
         });
     });
+    console.log(stored)
     var refs = document.querySelectorAll("a.crossref");
     refs.forEach(function(ref, i) {
+        console.log("looking at", ref)
+        console.log("stored", stored[ref.id])
         ref.textContent = stored[ref.id]
     })
 }
