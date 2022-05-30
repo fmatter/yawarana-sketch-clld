@@ -21,8 +21,8 @@ setup(
     install_requires=[
         "clld",  # >=7.0
         "waitress",
-        "clld_morphology_plugin @ git+https://git@github.com/fmatter/clld-morphology-plugin",
-        "clld_corpus_plugin @ git+https://git@github.com/fmatter/clld-corpus-plugin",
+        "clld_morphology_plugin @ git+https://git@github.com/fmatter/clld-morphology-plugin@0.0.2",
+        "clld_corpus_plugin @ git+https://git@github.com/fmatter/clld-corpus-plugin@0.0.2",
         "clld_markdown_plugin @ git+https://git@github.com/clld/clld-markdown-plugin",
         "cldfviz",
     ],
