@@ -4,7 +4,7 @@ from clld.db.meta import DBSession
 from clld.db.models import Sentence
 from clld_corpus_plugin.util import rendered_sentence
 from clld.web.util.htmllib import HTML
-from yawarana_grammar.models import Document, Phoneme
+from yawarana_sketch_clld.models import Document, Phoneme
 
 def my_render_ex(req, objid, ids=None, subexample=False, **kwargs):
     pexid = kwargs.get("exid", [""])[0]

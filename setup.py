@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name="yawarana_grammar",
+    name="yawarana_sketch_clld",
     version="0.0.2.dev",
-    description="yawarana_grammar",
+    description="yawarana_sketch_clld",
     classifiers=[
         "Programming Language :: Python",
         "Framework :: Pyramid",
@@ -39,9 +39,9 @@ setup(
             "zope.component>=3.11.0",
         ],
     },
-    test_suite="yawarana_grammar",
+    test_suite="yawarana_sketch_clld",
     entry_points="""\
     [paste.app_factory]
-    main = yawarana_grammar:main
+    main = yawarana_sketch_clld:main
 """,
 )

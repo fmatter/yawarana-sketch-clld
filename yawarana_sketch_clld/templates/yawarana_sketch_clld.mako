@@ -5,7 +5,7 @@
 ##
 <%block name="header">
     ##<a href="${request.route_url('dataset')}">
-    ##    <img src="${request.static_url('yawarana_grammar:static/header.gif')}"/>
+    ##    <img src="${request.static_url('yawarana_sketch_clld:static/header.gif')}"/>
     ##</a>
 </%block>
 
@@ -22,7 +22,7 @@ ${next.body()}
 </%block>
 
 <script>
-src="${req.static_url('yawarana_grammar:static/project.js')}"
+src="${req.static_url('yawarana_sketch_clld:static/project.js')}"
 number_examples()
 number_sections()
 number_captions()

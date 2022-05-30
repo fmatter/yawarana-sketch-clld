@@ -19,8 +19,8 @@ from clld_morphology_plugin.models import (
     Wordform_files,
 )
 from clld_corpus_plugin.models import Text, TextSentence, SentenceSlice
-import yawarana_grammar
-from yawarana_grammar import models
+import yawarana_sketch_clld
+from yawarana_sketch_clld import models
 
 
 def main(args):
@@ -42,8 +42,8 @@ def main(args):
 
     dataset = data.add(
         common.Dataset,
-        yawarana_grammar.__name__,
-        id=yawarana_grammar.__name__,
+        yawarana_sketch_clld.__name__,
+        id=yawarana_sketch_clld.__name__,
         name=ds.properties["dc:title"],
         domain=ds.properties["dc:identifier"].split("://")[1],
         description=ds.properties["dc:description"],

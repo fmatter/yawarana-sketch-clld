@@ -6,8 +6,8 @@ from clld.interfaces import IMapMarker, IValueSet, IValue, IDomainElement
 from clldutils.svg import pie, icon, data_url
 
 # we must make sure custom models are known at database initialization!
-from yawarana_grammar import models, interfaces
-from yawarana_grammar.adapters import PdfDownload
+from yawarana_sketch_clld import models, interfaces
+from yawarana_sketch_clld.adapters import PdfDownload
 
 
 def main(global_config, **settings):

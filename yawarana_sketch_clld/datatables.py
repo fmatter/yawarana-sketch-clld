@@ -4,7 +4,7 @@ from clld.web.datatables.base import LinkCol, Col, LinkToMapCol
 from clld.web.datatables.base import DataTable
 
 
-from yawarana_grammar import models
+from yawarana_sketch_clld import models
 
 
 class Documents(DataTable):

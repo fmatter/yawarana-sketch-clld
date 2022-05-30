@@ -17,7 +17,7 @@ from clld.db.meta import Base, CustomModelMixin
 from clld.db.models import common, IdNameDescriptionMixin
 from clld.db.meta import PolymorphicBaseMixin
 
-from yawarana_grammar.interfaces import IDocument, IPhoneme
+from yawarana_sketch_clld.interfaces import IDocument, IPhoneme
 from clld_morphology_plugin.models import Wordform
 
 # -----------------------------------------------------------------------------
