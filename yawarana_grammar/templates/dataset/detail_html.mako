@@ -8,7 +8,7 @@
 
 </%def>
 
-<h2>A digital sketch grammar of Yawarana</h2>
+<h2>${ctx.name}</h2>
 
 <p class="lead">
     This website is under construction.

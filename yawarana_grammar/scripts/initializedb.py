@@ -21,8 +21,6 @@ from clld_morphology_plugin.models import (
 from clld_corpus_plugin.models import Text, TextSentence, SentenceSlice
 import yawarana_grammar
 from yawarana_grammar import models
-from slugify import slugify
-import re
 
 
 def main(args):
@@ -31,37 +29,44 @@ def main(args):
         "/home/florianm/Dropbox/research/cariban/yawarana/yaw_cldf/cldf/metadata.json"
     )
 
+    license_dic = {
+        "http://creativecommons.org/licenses/by/4.0/": {
+            "license_icon": "cc-by.png",
+            "license_name": "Creative Commons Attribution 4.0 International License",
+        }
+    }
+
     data = Data()
     dataset = data.add(
         common.Dataset,
         yawarana_grammar.__name__,
         id=yawarana_grammar.__name__,
-        name="A digital sketch grammar of Yawarana",
-        domain="fl.mt/yawarana-sketch",
-        contact="florianmatter@gmail.com",
+        name=ds.properties["dc:title"],
+        domain=ds.properties["dc:identifier"].split("://")[1],
+        description=ds.properties["dc:description"],
         publisher_name="",
-        publisher_place="University of Oregon",
+        publisher_place="",
         publisher_url="",
-        license="http://creativecommons.org/licenses/by/4.0/",
-        jsondata={
-            "license_icon": "cc-by.png",
-            "license_name": "Creative Commons Attribution 4.0 International License",
-        },
+        license=ds.properties["dc:license"],
+        jsondata=license_dic.get(ds.properties["dc:license"], {}),
     )
 
-    fm = common.Contributor(
-        id="fm",
-        name="Florian Matter",
-        email="florianmatter@gmail.com",
-        url="https://fl.mt",
-    )
+    print("Contributors")
+    for contributor in ds.iter_rows("ContributorTable"):
+        if dataset.contact is None and contributor["Email"] is not None:
+            dataset.contact=contributor["Email"]
 
-    nc = common.Contributor(id="nc", name="Natalia Cáceres Arandia")
-
-    sg = common.Contributor(id="sg", name="Spike Gildea")
-    dataset.editors.append(common.Editor(contributor=fm, ord=1, primary=True))
-    dataset.editors.append(common.Editor(contributor=nc, ord=2, primary=True))
-    dataset.editors.append(common.Editor(contributor=sg, ord=3, primary=True))
+        new_cont = data.add(
+            common.Contributor,
+            contributor["ID"],
+            id=contributor["ID"],
+            name=contributor["Name"],
+            email=contributor["Email"],
+            url=contributor["Url"],
+        )
+        dataset.editors.append(
+            common.Editor(contributor=new_cont, ord=contributor["Order"], primary=True)
+        )
 
     print("Sources")
     for rec in bibtex.Database.from_file(ds.bibpath):
@@ -141,7 +146,7 @@ def main(args):
             language=data["Language"][ex["Language_ID"]],
             comment=ex["Comment"],
         )
-        if ex["Text_ID"] != None:
+        if ex["Text_ID"] is not None:
             data.add(
                 TextSentence,
                 ex["ID"],
@@ -246,112 +251,19 @@ def main(args):
         )
 
     print("Documents")
-    tent = open(
-        "/home/florianm/Dropbox/research/cariban/yawarana/yaw_sketch/clld_output.txt",
-        "r",
-    ).read()
-    tent = "\n" + tent
-    delim = "\n# "
-    parts = tent.split(delim)[1::]
-
-    tag_dic = {}
-    content_dic = {}
-    for (i, part) in enumerate(parts):
-        title, content = part.split("\n", 1)
-        tag = re.findall("{#(.*?)}", title)
-        title = title.split("{#")[0].strip()
-        if len(tag) == 0:
-            tag = slugify(title)
-        else:
-            tag = tag[0]
-        content_dic[tag] = {"title": title, "content": f"<a id='{tag}'></a>" + content}
-
-        tags = re.findall("{#(.*?)}", content_dic[tag]["content"])
-        table_tags = re.findall(
-            "<div class='caption table' id='(.*?)'>", content_dic[tag]["content"]
-        )
-        for subtag in tags + table_tags:
-            if subtag in tag_dic:
-                print(f"duplicate tag {subtag} in {tag}: {tag_dic[subtag]}")
-            tag_dic[subtag] = tag
-        tag_dic[tag] = tag
-
-    for tag in content_dic.keys():
-        refs = re.findall(r"<a href='#(.*?)' .*?</a>", tent)
-        for ref in refs:
-            if tag_dic[ref] != tag:
-                content_dic[tag]["content"] = re.sub(
-                    rf"<a href='#{ref}'.*?</a>",
-                    f"[crossref](ChapterTable?_anchor={ref}#cldf:{tag_dic[ref]})",
-                    content_dic[tag]["content"],
-                )
-
-    for i, (tag, doc_data) in enumerate(content_dic.items()):
-        data.add(
+    for chapter in ds.iter_rows("ChapterTable"):
+        ch = data.add(
             models.Document,
-            tag,
-            id=tag,
-            name=doc_data["title"],
-            description=doc_data["content"],
-            chapter_no=i + 1,
-            order=chr(i + 96),
+            chapter["ID"],
+            id=chapter["ID"],
+            name=chapter["Name"],
+            description=chapter["Description"],
         )
-
-    data.add(
-        models.Document,
-        "ambiguity",
-        id="ambiguity",
-        name="Manuscript: Parsing ambiguity",
-        order="zzz",
-        description=open(
-            "/home/florianm/Dropbox/research/cariban/yawarana/yawarana-parsing-ambiguity/clld_output.txt",
-            "r",
-        ).read(),
-    )
-
-    data.add(
-        models.Document,
-        "tam",
-        id="tam",
-        name="Notes: TAM suffixes",
-        order="zzz",
-        description=open(
-            "/home/florianm/Dropbox/research/cariban/yawarana/yaw_notes/clld_output.txt",
-            "r",
-        ).read(),
-    )
-
-    data.add(common.Language, "tri", id="tri", name="Tiriyo")
-
-    sourced_ex = data.add(
-        common.Sentence,
-        "sourced-sentence",
-        id="sourced-sentence",
-        name="Jekï tuuka.",
-        description="S/he has hit my pet.",
-        analyzed="\t".join(["j-ekɨ", "tuuka"]),
-        gloss="\t".join(["1-pet", "hit:PRS.PFV"]),
-        language=data["Language"]["tri"],
-    )
-
-    sourced_ex1 = data.add(
-        common.Sentence,
-        "sourced-sentence1",
-        id="sourced-sentence1",
-        name="Kaikui inetawawei wï.",
-        description="I haven't heard the jaguar's voice",
-        analyzed="\t".join(["kaikui", "in-eta-ewa=w-ei", "wï"]),
-        gloss="\t".join(["jaguar", "3NEG-hear-NEG=1Sa-COP:PRS.PFV", "1PRO"]),
-        language=data["Language"]["tri"],
-    )
-
-    source = data["Source"]["triomeira1999"]
-    for s_ex in [sourced_ex, sourced_ex1]:
-        DBSession.add(
-            common.SentenceReference(
-                sentence=s_ex, source=source, key=source.id, description="239"
-            )
-        )
+        if chapter["Number"] is not None:
+            ch.chapter_no = int(chapter["Number"])
+            ch.order = chr(int(chapter["Number"]) + 96)
+        else:
+            ch.order = "zzz"
 
 
 def prime_cache(args):
