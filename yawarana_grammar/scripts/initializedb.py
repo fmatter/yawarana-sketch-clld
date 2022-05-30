@@ -28,13 +28,18 @@ def main(args):
     ds = args.cldf
 
     license_dic = {
-        "http://creativecommons.org/licenses/by/4.0/": {
+        "creativecommons.org/licenses/by/4.0": {
             "license_icon": "cc-by.png",
             "license_name": "Creative Commons Attribution 4.0 International License",
+        },
+        "creativecommons.org/licenses/by-sa/4.0": {
+            "license_icon": "cc-by-sa.png",
+            "license_name": "Creative Commons Attribution-ShareAlike 4.0 International",
         }
     }
 
     data = Data()
+
     dataset = data.add(
         common.Dataset,
         yawarana_grammar.__name__,
@@ -46,8 +51,9 @@ def main(args):
         publisher_place="",
         publisher_url="",
         license=ds.properties["dc:license"],
-        jsondata=license_dic.get(ds.properties["dc:license"], {}),
+        jsondata=license_dic.get(ds.properties["dc:license"].split("//", 1)[1].strip("/"), {}),
     )
+
 
     print("Contributors")
     for contributor in ds.iter_rows("ContributorTable"):
