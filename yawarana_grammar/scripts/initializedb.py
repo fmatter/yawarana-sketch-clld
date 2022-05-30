@@ -25,9 +25,7 @@ from yawarana_grammar import models
 
 def main(args):
 
-    ds = Dataset.from_metadata(
-        "/home/florianm/Dropbox/research/cariban/yawarana/yaw_cldf/cldf/metadata.json"
-    )
+    ds = args.cldf
 
     license_dic = {
         "http://creativecommons.org/licenses/by/4.0/": {
