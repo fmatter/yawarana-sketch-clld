@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="yawarana_grammar",
-    version="0.0.1",
+    version="0.0.2.dev",
     description="yawarana_grammar",
     classifiers=[
         "Programming Language :: Python",
