@@ -15,6 +15,7 @@ from clld_morphology_plugin.models import (
     Meaning,
     Wordform,
     FormSlice,
+    POS,
     FormMeaning,
     Wordform_files,
 )
@@ -35,7 +36,7 @@ def main(args):
         "creativecommons.org/licenses/by-sa/4.0": {
             "license_icon": "cc-by-sa.png",
             "license_name": "Creative Commons Attribution-ShareAlike 4.0 International",
-        }
+        },
     }
 
     data = Data()
@@ -46,19 +47,19 @@ def main(args):
         id=yawarana_sketch_clld.__name__,
         name=ds.properties["dc:title"],
         domain=ds.properties["dc:identifier"].split("://")[1],
-        description=ds.properties["dc:description"],
         publisher_name="",
         publisher_place="",
         publisher_url="",
         license=ds.properties["dc:license"],
-        jsondata=license_dic.get(ds.properties["dc:license"].split("//", 1)[1].strip("/"), {}),
+        jsondata=license_dic.get(
+            ds.properties["dc:license"].split("//", 1)[1].strip("/"), {}
+        ),
     )
-
 
     print("Contributors")
     for contributor in ds.iter_rows("ContributorTable"):
         if dataset.contact is None and contributor["Email"] is not None:
-            dataset.contact=contributor["Email"]
+            dataset.contact = contributor["Email"]
 
         new_cont = data.add(
             common.Contributor,
@@ -156,7 +157,7 @@ def main(args):
                 ex["ID"],
                 sentence=new_ex,
                 text=data["Text"][ex["Text_ID"]],
-                part_no=ex["Part"]
+                part_no=ex["Part"],
             )
         elif ex["Source"] != None:
             bibkey, pages = Sources.parse(ex["Source"][0])
@@ -173,6 +174,16 @@ def main(args):
         phoneme_dict[pnm["Name"]] = pnm["ID"]
         data.add(models.Phoneme, pnm["ID"], id=pnm["ID"], name=pnm["Name"])
 
+    print("Parts of speech")
+    for pos in ds.iter_rows("POSTable"):
+        data.add(
+            POS,
+            pos["ID"],
+            id=pos["ID"],
+            name=pos["Name"],
+            description=pos["Description"],
+        )
+
     print("Wordforms")
     for form in ds.iter_rows("FormTable"):
         new_form = data.add(
@@ -186,6 +197,9 @@ def main(args):
                 data["Meaning"][x].name for x in form["Parameter_ID"]
             ),
         )
+        if form["POS"] is not None:
+            new_form.pos = data["POS"][form["POS"]]
+
         for meaning in form["Parameter_ID"]:
             data.add(
                 FormMeaning,
@@ -257,18 +271,22 @@ def main(args):
 
     print("Documents")
     for chapter in ds.iter_rows("ChapterTable"):
-        ch = data.add(
-            models.Document,
-            chapter["ID"],
-            id=chapter["ID"],
-            name=chapter["Name"],
-            description=chapter["Description"],
-        )
-        if chapter["Number"] is not None:
-            ch.chapter_no = int(chapter["Number"])
-            ch.order = chr(int(chapter["Number"]) + 96)
+        if chapter["ID"] == "landingpage":
+            dataset.description = chapter["Description"]
+
         else:
-            ch.order = "zzz"
+            ch = data.add(
+                models.Document,
+                chapter["ID"],
+                id=chapter["ID"],
+                name=chapter["Name"],
+                description=chapter["Description"],
+            )
+            if chapter["Number"] is not None:
+                ch.chapter_no = int(chapter["Number"])
+                ch.order = chr(int(chapter["Number"]) + 96)
+            else:
+                ch.order = "zzz"
 
 
 def prime_cache(args):
