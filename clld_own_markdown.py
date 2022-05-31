@@ -1,4 +1,4 @@
-from clld_morphology_plugin.models import Morph, Morpheme, Wordform
+from clld_morphology_plugin.models import Morph, Morpheme, Wordform, POS
 from clld_corpus_plugin.models import Text
 from clld.db.meta import DBSession
 from clld.db.models import Sentence
@@ -27,6 +27,7 @@ custom_model_map = {
         "decorate": lambda x: f"*{x}*",
     },
     "TextTable": {"route": "text", "model": Text, "decorate": lambda x: f"'{x}'"},
+    "POSTable": {"route": "pos", "model": POS},
     "FormTable": {"route": "wordform", "model": Wordform, "decorate": lambda x: f"*{x}*"},
     "ChapterTable": {"route": "document", "model": Document},
     "PhonemeTable": {"route": "phoneme", "model": Phoneme, "decorate": lambda x: f"/{x}/"},
