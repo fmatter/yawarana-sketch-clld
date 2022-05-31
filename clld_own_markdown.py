@@ -7,11 +7,11 @@ from clld.web.util.htmllib import HTML
 from yawarana_sketch_clld.models import Document, Phoneme
 
 def my_render_ex(req, objid, ids=None, subexample=False, **kwargs):
-    pexid = kwargs.get("exid", [""])[0]
+    pexample_id = kwargs.get("example_id", [""])[0]
     if objid == "__all__":
         if ids:
             ex_strs = [my_render_ex(req, mid, subexample=True) for mid in ids[0].split(",")]
-            return HTML.ol(HTML.li(HTML.ol(*ex_strs, class_="subexample"), class_="example", id_=pexid), class_="example")
+            return HTML.ol(HTML.li(HTML.ol(*ex_strs, class_="subexample"), class_="example", id_=pexample_id), class_="example")
     sentence = DBSession.query(Sentence).filter(Sentence.id == objid)[0]
     if subexample:
         return rendered_sentence(req, sentence, sentence_link=True, counter_class="subexample", in_context=True)

@@ -156,6 +156,7 @@ def main(args):
                 ex["ID"],
                 sentence=new_ex,
                 text=data["Text"][ex["Text_ID"]],
+                part_no=ex["Part"]
             )
         elif ex["Source"] != None:
             bibkey, pages = Sources.parse(ex["Source"][0])
