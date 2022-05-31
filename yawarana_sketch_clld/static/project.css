@@ -65,6 +65,10 @@ li a.Morph{
   color: darkgreen;
 }
 
+li a.Morphset{
+  color: darkgreen;
+}
+
 article {
     width: 50em;
     margin: 0 auto;
