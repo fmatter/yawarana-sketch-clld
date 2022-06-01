@@ -7,6 +7,7 @@ from clldutils.color import qualitative_colors
 from clld.cliutil import Data, bibtex2source
 from clld.db.meta import DBSession
 from clld.db.models import common
+from slugify import slugify
 from clld.lib import bibtex
 from clld_morphology_plugin.models import (
     MorphemeMeaning,
@@ -19,7 +20,14 @@ from clld_morphology_plugin.models import (
     FormMeaning,
     Wordform_files,
 )
-from clld_corpus_plugin.models import Text, TextSentence, SentenceSlice
+from clld_corpus_plugin.models import (
+    Text,
+    TextSentence,
+    SentenceSlice,
+    Tag,
+    TextTag,
+    SentenceTag,
+)
 import yawarana_sketch_clld
 from yawarana_sketch_clld import models
 
@@ -127,9 +135,20 @@ def main(args):
             ),
         )
 
+    tag_dic = {}
+    def tag_slug(tag):
+        if tag not in tag_dic:
+            tagslug = slugify(tag)
+            suff = 1
+            while f"{tagslug}-{suff}" in tag_dic.values():
+                suff += 1
+            tag_dic[tag] = f"{tagslug}-{suff}"
+        return tag_dic[tag]
+
     print("Texts")
     for text in ds.iter_rows("TextTable"):
-        data.add(
+        tags = text["Metadata"].pop("tags", [])
+        new_text = data.add(
             Text,
             text["ID"],
             id=text["ID"],
@@ -137,6 +156,10 @@ def main(args):
             description=text["Description"],
             text_metadata=text["Metadata"],
         )
+        for tag in tags:
+            if tag not in data["Tag"]:
+                data.add(Tag, tag, id=tag, name=tag)
+            data.add(TextTag, text["ID"] + tag, tag=data["Tag"][tag], text=new_text)
 
     print("Sentences")
     for ex in ds.iter_rows("ExampleTable"):
@@ -151,6 +174,18 @@ def main(args):
             language=data["Language"][ex["Language_ID"]],
             comment=ex["Comment"],
         )
+        for tag in set(ex["Tags"]):
+            if not tag:
+                continue
+            slug = tag_slug(tag)
+            if slug not in data["Tag"]:
+                data.add(Tag, slug, id=slug, name=tag)
+            data.add(
+                SentenceTag,
+                ex["ID"] + slug,
+                tag=data["Tag"][slug],
+                sentence=new_ex,
+            )
         if ex["Text_ID"] is not None:
             data.add(
                 TextSentence,
@@ -186,6 +221,7 @@ def main(args):
 
     print("Wordforms")
     for form in ds.iter_rows("FormTable"):
+
         new_form = data.add(
             Wordform,
             form["ID"],
@@ -208,12 +244,13 @@ def main(args):
                 meaning=data["Meaning"][meaning],
             )
         for seg in form["Segments"]:
-            data.add(
-                models.FormPhoneme,
-                form["ID"] + seg,
-                form=new_form,
-                phoneme=data["Phoneme"][phoneme_dict[seg]],
-            )
+            if seg != "�":
+                data.add(
+                    models.FormPhoneme,
+                    form["ID"] + seg,
+                    form=new_form,
+                    phoneme=data["Phoneme"][phoneme_dict[seg]],
+                )
 
     print("Audio")
     for audio in ds.iter_rows("MediaTable"):
