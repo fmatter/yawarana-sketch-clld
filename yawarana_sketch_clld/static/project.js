@@ -72,7 +72,7 @@ function number_sections(){
         // reset the smaller counters
         reached = false;
         crossref = document.createElement('a')
-        crossref.textContent = heading.textContent
+        crossref.textContent = '\xa0\xa0'.repeat(level.charAt(level.length - 1)-2)+heading.textContent
         crossref.href = "#"+heading.id
         li = document.createElement('div')
         li.appendChild(crossref);
