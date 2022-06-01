@@ -11,5 +11,5 @@
 ${markdown(request, f"""
 #### Table of contents
 {chapter_strings}
-""")[0]|n}
+""")|n}
 

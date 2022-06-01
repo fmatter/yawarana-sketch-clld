@@ -1,1 +1,1 @@
-<%from clld_markdown_plugin import markdown%> ${markdown(request, ctx.description)[0]|n}
+<%from clld_markdown_plugin import markdown%> ${markdown(request, ctx.description)|n}

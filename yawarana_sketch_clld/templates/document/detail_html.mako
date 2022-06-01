@@ -15,7 +15,7 @@
 
 <h1${no_str}>${ctx.name}</h1>
 
-${markdown(request, ctx.description, permalink=False)[0]|n}
+${markdown(request, ctx.description, permalink=False)|n}
 
 </article>
 
