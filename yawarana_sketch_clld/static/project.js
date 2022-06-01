@@ -49,6 +49,7 @@ function get_number_label(counters, level) {
 var stored = {}
 
 function number_sections(){
+    var toc = document.getElementById("toc")
     var counters = {};
     var levels = ["h2", "h3", "h4", "h5", "h6"];
     levels.forEach(function(x, i) {
@@ -70,6 +71,12 @@ function number_sections(){
         heading.textContent = prefix + number + ". " + heading.textContent
         // reset the smaller counters
         reached = false;
+        crossref = document.createElement('a')
+        crossref.textContent = heading.textContent
+        crossref.href = "#"+heading.id
+        li = document.createElement('div')
+        li.appendChild(crossref);
+        toc.appendChild(li);
         stored[heading.id] = prefix + number
         levels.forEach(function(level_comp, j) {
             if (reached){
@@ -101,11 +108,9 @@ function number_captions(){
             }
         });
     });
-    console.log(stored)
     var refs = document.querySelectorAll("a.crossref");
     refs.forEach(function(ref, i) {
-        console.log("looking at", ref)
-        console.log("stored", stored[ref.id])
         ref.textContent = stored[ref.id]
+        ref.id = null
     })
 }

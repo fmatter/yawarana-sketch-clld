@@ -14,6 +14,7 @@
 % endif
 
 <h1${no_str}>${ctx.name}</h1>
+<div id="toc"></div>
 
 ${markdown(request, ctx.description, permalink=False)|n}
 
