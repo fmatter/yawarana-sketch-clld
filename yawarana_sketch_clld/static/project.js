@@ -51,8 +51,6 @@ var stored = {}
 function number_sections(){
     var toc = document.getElementById("toc")
     var title = document.createElement('span')
-    toc.classList.add("well")
-    toc.classList.add("well-small")
     var counters = {};
     var levels = ["h2", "h3", "h4", "h5", "h6"];
     levels.forEach(function(x, i) {
@@ -66,6 +64,9 @@ function number_sections(){
         prefix = ""
     }
     h1.textContent = prefix+" " + h1.textContent
+    toctitle = document.createElement("b")
+    toctitle.textContent = h1.textContent
+    toc.appendChild(toctitle)
     var headings = document.querySelectorAll("h2, h3, h4, h5, h6");
     headings.forEach(function(heading, i) {
         var level = heading.tagName.toLowerCase();

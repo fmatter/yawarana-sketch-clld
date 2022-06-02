@@ -136,6 +136,7 @@ def main(args):
         )
 
     tag_dic = {}
+
     def tag_slug(tag):
         if tag not in tag_dic:
             tagslug = slugify(tag)
@@ -181,10 +182,7 @@ def main(args):
             if slug not in data["Tag"]:
                 data.add(Tag, slug, id=slug, name=tag)
             data.add(
-                SentenceTag,
-                ex["ID"] + slug,
-                tag=data["Tag"][slug],
-                sentence=new_ex,
+                SentenceTag, ex["ID"] + slug, tag=data["Tag"][slug], sentence=new_ex
             )
         if ex["Text_ID"] is not None:
             data.add(
@@ -307,6 +305,7 @@ def main(args):
         )
 
     print("Documents")
+    chapters = {}
     for chapter in ds.iter_rows("ChapterTable"):
         if chapter["ID"] == "landingpage":
             dataset.description = chapter["Description"]
@@ -322,8 +321,12 @@ def main(args):
             if chapter["Number"] is not None:
                 ch.chapter_no = int(chapter["Number"])
                 ch.order = chr(int(chapter["Number"]) + 96)
+                chapters[ch.chapter_no] = ch
             else:
                 ch.order = "zzz"
+    for nr, chapter in chapters.items():
+        if 1 < nr:
+            chapter.preceding = chapters[nr - 1]
 
 
 def prime_cache(args):

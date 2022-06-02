@@ -14,9 +14,26 @@
 % endif
 
 <h1${no_str}>${ctx.name}</h1>
-<div id="toc"></div>
+<div id="docnav">
+    <div id="toc" class="well well-small">
+    </div>
+    <div class="pagination">
+        <ul>
+            % if ctx.preceding:
+                <li><a class="page-link" href="${request.resource_url(ctx.preceding)}">←${ctx.preceding}</a></li>
+            % endif
+            % if ctx.following:
+                <li><a class="page-link" href="${request.resource_url(ctx.following[0])}">${ctx.following[0]}→</a></li>
+            % endif
+        </ul>
+    </div>
+</div>
 
 ${markdown(request, ctx.description, permalink=False)|n}
 
 </article>
 
+<script>
+src="${req.static_url('yawarana_sketch_clld:static/project.js')}"
+number_sections()
+</script>

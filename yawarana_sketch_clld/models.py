@@ -30,6 +30,17 @@ class Document(Base, IdNameDescriptionMixin):
     chapter_no = Column(Integer)
     order = Column(String)
 
+    following_pk = Column(Integer, ForeignKey("document.pk"))
+    preceding_pk = Column(Integer, ForeignKey("document.pk"))
+    preceding = relationship(
+        "Document",
+        innerjoin=True,
+        foreign_keys=preceding_pk,
+        uselist=False,
+        remote_side="Document.pk",
+        backref="following",
+    )
+
     def __str__(self):
         if not self.chapter_no:
             return self.name

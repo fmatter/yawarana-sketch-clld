@@ -71,7 +71,8 @@ li a.Morphset{
 
 article {
     width: 50em;
-    margin: 0 auto;
+    /*margin: 0 auto;*/
+    margin-left: 10em;
     max-width: 100%;
     line-height: 1.5;
     text-align: justify;
@@ -79,9 +80,9 @@ article {
     font-size: 1.2em;
 }
 
-div#toc {
+div#docnav {
     position:fixed;
-    width: 30em;
+    width: 40em;
     font-size: 90%;
     top: 3.5em;
     right: 1em;

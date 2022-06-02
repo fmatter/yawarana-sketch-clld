@@ -24,6 +24,5 @@ ${next.body()}
 <script>
 src="${req.static_url('yawarana_sketch_clld:static/project.js')}"
 number_examples()
-number_sections()
 number_captions()
 </script>
