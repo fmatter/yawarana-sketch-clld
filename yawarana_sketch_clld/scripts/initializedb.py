@@ -192,7 +192,7 @@ def main(args):
                 text=data["Text"][ex["Text_ID"]],
                 part_no=ex["Part"],
             )
-        elif ex["Source"] != None:
+        elif len(ex["Source"]) > 0:
             bibkey, pages = Sources.parse(ex["Source"][0])
             source = data["Source"][bibkey]
             DBSession.add(
