@@ -7,6 +7,8 @@ from clld.web.util.htmllib import HTML
 from yawarana_sketch_clld.models import Document, Phoneme
 
 def my_render_ex(req, objid, ids=None, subexample=False, **kwargs):
+    if "subexample" in kwargs.get("format", []):
+        subexample=True
     pexample_id = kwargs.get("example_id", [""])[0]
     if objid == "__all__":
         if ids:

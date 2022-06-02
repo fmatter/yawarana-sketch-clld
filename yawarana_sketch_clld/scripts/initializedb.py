@@ -203,7 +203,7 @@ def main(args):
                 )
             )
 
-    print("Phonemes!")
+    print("Phonemes")
     phoneme_dict = {}
     for pnm in ds.iter_rows("PhonemeTable"):
         phoneme_dict[pnm["Name"]] = pnm["ID"]
