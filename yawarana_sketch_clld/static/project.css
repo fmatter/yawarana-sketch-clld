@@ -83,7 +83,8 @@ div#toc {
     position:fixed;
     width: 30em;
     font-size: 90%;
-    left: 1em;
+    top: 3.5em;
+    right: 1em;
     z-index:100;
 }
 

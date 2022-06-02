@@ -50,6 +50,9 @@ var stored = {}
 
 function number_sections(){
     var toc = document.getElementById("toc")
+    var title = document.createElement('span')
+    toc.classList.add("well")
+    toc.classList.add("well-small")
     var counters = {};
     var levels = ["h2", "h3", "h4", "h5", "h6"];
     levels.forEach(function(x, i) {
