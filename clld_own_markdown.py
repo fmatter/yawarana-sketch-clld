@@ -10,16 +10,16 @@ from clld_document_plugin.models import Document
 def my_render_ex(req, objid, ids=None, subexample=False, **kwargs):
     if "subexample" in kwargs.get("format", []):
         subexample=True
-    pexample_id = kwargs.get("example_id", [""])[0]
+    example_id = kwargs.get("example_id", [None])[0]
     if objid == "__all__":
         if ids:
             ex_strs = [my_render_ex(req, mid, subexample=True) for mid in ids[0].split(",")]
-            return HTML.ol(HTML.li(HTML.ol(*ex_strs, class_="subexample"), class_="example", id_=pexample_id), class_="example")
+            return HTML.ol(HTML.li(HTML.ol(*ex_strs, class_="subexample"), class_="example", id_=example_id), class_="example")
     sentence = DBSession.query(Sentence).filter(Sentence.id == objid)[0]
     if subexample:
         return rendered_sentence(req, sentence, sentence_link=True, counter_class="subexample", in_context=True)
     else:
-        return HTML.ol(rendered_sentence(req, sentence, sentence_link=True, in_context=True, counter_class="example"), class_="example")
+        return HTML.ol(rendered_sentence(req, sentence, sentence_link=True, in_context=True, example_id=example_id, counter_class="example"), class_="example")
     return 
 
 custom_model_map = {
