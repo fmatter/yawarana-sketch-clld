@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="yawarana_sketch_clld",
-    version="0.0.2",
+    version="0.0.3.dev",
     description="yawarana_sketch_clld",
     classifiers=[
         "Programming Language :: Python",
