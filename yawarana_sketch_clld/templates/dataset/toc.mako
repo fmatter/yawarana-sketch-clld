@@ -1,6 +1,6 @@
 <%from clld_markdown_plugin import markdown%>
 <%from clld.db.meta import DBSession%>
-<%from yawarana_sketch_clld.models import Document%>
+<%from clld_document_plugin.models import Document%>
 
 <% chapter_strings = [] %>
 % for chapter in DBSession.query(Document).filter(Document.chapter_no!=None):

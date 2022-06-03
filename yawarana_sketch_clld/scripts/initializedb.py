@@ -30,7 +30,7 @@ from clld_corpus_plugin.models import (
 )
 import yawarana_sketch_clld
 from yawarana_sketch_clld import models
-
+from clld_document_plugin.models import Document
 
 def main(args):
 
@@ -312,7 +312,7 @@ def main(args):
 
         else:
             ch = data.add(
-                models.Document,
+                Document,
                 chapter["ID"],
                 id=chapter["ID"],
                 name=chapter["Name"],

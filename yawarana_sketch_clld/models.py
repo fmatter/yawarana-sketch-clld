@@ -17,34 +17,12 @@ from clld.db.meta import Base, CustomModelMixin
 from clld.db.models import common, IdNameDescriptionMixin
 from clld.db.meta import PolymorphicBaseMixin
 
-from yawarana_sketch_clld.interfaces import IDocument, IPhoneme
+from yawarana_sketch_clld.interfaces import IPhoneme
 from clld_morphology_plugin.models import Wordform
 
 # -----------------------------------------------------------------------------
 # specialized common mapper classes
 # -----------------------------------------------------------------------------
-
-
-@implementer(IDocument)
-class Document(Base, IdNameDescriptionMixin):
-    chapter_no = Column(Integer)
-    order = Column(String)
-
-    following_pk = Column(Integer, ForeignKey("document.pk"))
-    preceding_pk = Column(Integer, ForeignKey("document.pk"))
-    preceding = relationship(
-        "Document",
-        innerjoin=True,
-        foreign_keys=preceding_pk,
-        uselist=False,
-        remote_side="Document.pk",
-        backref="following",
-    )
-
-    def __str__(self):
-        if not self.chapter_no:
-            return self.name
-        return f"{self.chapter_no}. {self.name}"
 
 
 @implementer(IPhoneme)

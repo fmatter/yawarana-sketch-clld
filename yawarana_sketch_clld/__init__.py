@@ -18,10 +18,7 @@ def main(global_config, **settings):
     config.include("clld_corpus_plugin")
     config.include("clld_morphology_plugin")
     config.include("clld_markdown_plugin")
-
-    config.register_resource(
-        "document", models.Document, interfaces.IDocument, with_index=True
-    )
+    config.include("clld_document_plugin")
 
     config.register_resource(
         "phoneme", models.Phoneme, interfaces.IPhoneme, with_index=True

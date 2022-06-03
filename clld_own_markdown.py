@@ -4,7 +4,8 @@ from clld.db.meta import DBSession
 from clld.db.models import Sentence
 from clld_corpus_plugin.util import rendered_sentence
 from clld.web.util.htmllib import HTML
-from yawarana_sketch_clld.models import Document, Phoneme
+from yawarana_sketch_clld.models import Phoneme
+from clld_document_plugin.models import Document
 
 def my_render_ex(req, objid, ids=None, subexample=False, **kwargs):
     if "subexample" in kwargs.get("format", []):

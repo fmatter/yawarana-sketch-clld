@@ -7,6 +7,7 @@ Most of the heavy lifting is done by the following plugins:
 * [clld-morphology-plugin](https://github.com/fmatter/clld-morphology-plugin)
 * [clld-corpus-plugin](https://github.com/fmatter/clld-corpus-plugin)
 * [clld-markdown-plugin](https://github.com/clld/clld-markdown-plugin)
+* [clld-document-plugin](https://github.com/fmatter/clld-document-plugin)
 
-The app itself has additional `Document` and `Phoneme` models, as well as some [CSS](yawarana_sketch_clld/static/project.css) and [JS](yawarana_sketch_clld/static/project.js).
-It should be possible to use it with other datasets.
+The app itself only has an additional `Phoneme` model.
+It should be possible to use with other datasets.

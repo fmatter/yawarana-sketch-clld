@@ -1,4 +1,5 @@
 <%inherit file="app.mako"/>
+<link rel="stylesheet" href="${req.static_url('clld_document_plugin:static/clld-document.css')}"/>
 
 ##
 ## define app-level blocks:
@@ -21,8 +22,8 @@ ${next.body()}
     </span>
 </%block>
 
+<script src="${req.static_url('clld_document_plugin:static/clld-document.js')}">
+</script>
 <script>
-src="${req.static_url('yawarana_sketch_clld:static/project.js')}"
 number_examples()
-number_captions()
 </script>
