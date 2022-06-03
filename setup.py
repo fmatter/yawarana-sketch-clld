@@ -24,7 +24,7 @@ setup(
         "clld_morphology_plugin @ git+https://git@github.com/fmatter/clld-morphology-plugin@0.0.3",
         "clld_corpus_plugin @ git+https://git@github.com/fmatter/clld-corpus-plugin@0.0.3",
         "clld_document_plugin @ git+https://git@github.com/fmatter/clld-document-plugin@0.0.1",
-        "clld_markdown_plugin @ git+https://git@github.com/clld/clld-markdown-plugin",
+        "clld_markdown_plugin @ git+https://git@github.com/clld/clld-markdown-plugin.git@0ad76aa85148408d1b8db7de12075c6e329f01cb",
         "cldfviz",
     ],
     extras_require={
