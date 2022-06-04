@@ -6,3 +6,8 @@ audio[id*="_player"] {
     display: inline;
     height: 1.6ex;
 }
+
+#top {
+    position: fixed;
+    width: 100%;
+}
