@@ -170,6 +170,7 @@ def main(args):
             id=ex["ID"],
             name=ex["Primary_Text"],
             description=ex["Translated_Text"],
+            markup_description=ex["Original_Translation"],
             analyzed="\t".join(ex["Analyzed_Word"]),
             gloss="\t".join(ex["Gloss"]),
             language=data["Language"][ex["Language_ID"]],
