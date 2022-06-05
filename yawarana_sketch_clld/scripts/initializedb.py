@@ -35,7 +35,7 @@ from clld_document_plugin.models import Document
 def main(args):
 
     ds = args.cldf
-
+    
     license_dic = {
         "creativecommons.org/licenses/by/4.0": {
             "license_icon": "cc-by.png",
