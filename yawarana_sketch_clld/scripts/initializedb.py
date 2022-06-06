@@ -16,6 +16,8 @@ from clld_morphology_plugin.models import (
     Meaning,
     Wordform,
     FormSlice,
+    Lexeme,
+    Inflection,
     POS,
     FormMeaning,
     Wordform_files,
@@ -32,10 +34,11 @@ import yawarana_sketch_clld
 from yawarana_sketch_clld import models
 from clld_document_plugin.models import Document
 
+
 def main(args):
 
     ds = args.cldf
-    
+
     license_dic = {
         "creativecommons.org/licenses/by/4.0": {
             "license_icon": "cc-by.png",
@@ -250,6 +253,25 @@ def main(args):
                     form=new_form,
                     phoneme=data["Phoneme"][phoneme_dict[seg]],
                 )
+
+    print("Lexemes")
+    for lex in ds.iter_rows("LexemeTable"):
+        data.add(
+            Lexeme,
+            lex["ID"],
+            id=lex["ID"],
+            name=lex["Name"],
+            language=data["Language"][lex["Language_ID"]],
+        )
+
+    print("Inflected forms")
+    for form in ds.iter_rows("InflectionTable"):
+        data.add(
+            Inflection,
+            form["ID"],
+            lexeme=data["Lexeme"][form["Lexeme_ID"]],
+            form=data["Wordform"][form["Form_ID"]],
+        )
 
     print("Audio")
     for audio in ds.iter_rows("MediaTable"):
