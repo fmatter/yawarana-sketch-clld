@@ -261,6 +261,7 @@ def main(args):
             lex["ID"],
             id=lex["ID"],
             name=lex["Name"],
+            description=lex["Description"],
             language=data["Language"][lex["Language_ID"]],
         )
 
