@@ -1,6 +1,11 @@
 <%inherit file="app.mako"/>
 <link rel="stylesheet" href="${req.static_url('clld_document_plugin:static/clld-document.css')}"/>
 
+<%def name="markdown(request, content)">
+    <%from clld_markdown_plugin import markdown%>
+    ${markdown(request, content)|n}
+</%def>
+
 ##
 ## define app-level blocks:
 ##
@@ -27,4 +32,5 @@ ${next.body()}
 <script>
 number_examples()
 </script>
-<script type="text/javascript" src="https://livejs.com/live.js"></script>
+
+## <script type="text/javascript" src="https://livejs.com/live.js"></script>

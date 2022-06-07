@@ -114,6 +114,7 @@ def main(args):
             description=" / ".join(
                 data["Meaning"][x].name for x in morpheme["Parameter_ID"]
             ),
+            comment=morpheme["Comment"]
         )
         for meaning in morpheme["Parameter_ID"]:
             data.add(
