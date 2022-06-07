@@ -20,6 +20,8 @@ from clld_morphology_plugin.models import (
     Inflection,
     POS,
     FormMeaning,
+    LexemeLexemePart,
+    LexemeMorphemePart,
     Wordform_files,
 )
 from clld_corpus_plugin.models import (
@@ -264,6 +266,22 @@ def main(args):
             name=lex["Name"],
             description=lex["Description"],
             language=data["Language"][lex["Language_ID"]],
+        )
+
+    for lexlex in ds.iter_rows("LexemeLexemeParts"):
+        data.add(
+            LexemeLexemePart,
+            lexlex["ID"],
+            base_lexeme=data["Lexeme"][lexlex["Base_ID"]],
+            derived_lexeme=data["Lexeme"][lexlex["Lexeme_ID"]],
+        )
+
+    for lexmorph in ds.iter_rows("LexemeMorphemeParts"):
+        data.add(
+            LexemeMorphemePart,
+            lexmorph["ID"],
+            morpheme=data["Morpheme"][lexmorph["Morpheme_ID"]],
+            lexeme=data["Lexeme"][lexmorph["Lexeme_ID"]],
         )
 
     print("Inflected forms")
