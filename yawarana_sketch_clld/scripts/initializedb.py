@@ -1,40 +1,45 @@
-import itertools
 import collections
+import itertools
+import sys
 
-from pycldf import Sources, Dataset
-from clldutils.misc import nfilter
-from clldutils.color import qualitative_colors
 from clld.cliutil import Data, bibtex2source
 from clld.db.meta import DBSession
 from clld.db.models import common
-from slugify import slugify
 from clld.lib import bibtex
-from clld_morphology_plugin.models import (
-    MorphemeMeaning,
-    Morpheme,
-    Morph,
-    Meaning,
-    Wordform,
-    FormSlice,
-    Lexeme,
-    Inflection,
-    POS,
-    FormMeaning,
-    LexemeLexemePart,
-    LexemeMorphemePart,
-    Wordform_files,
-)
 from clld_corpus_plugin.models import (
+    SentenceSlice,
+    SentenceTag,
+    Tag,
     Text,
     TextSentence,
-    SentenceSlice,
-    Tag,
     TextTag,
-    SentenceTag,
 )
+from clld_document_plugin.models import Document
+from clld_morphology_plugin.models import (
+    POS,
+    FormMeaning,
+    FormSlice,
+    Inflection,
+    Lexeme,
+    LexemeLexemePart,
+    LexemeMorphemePart,
+    Meaning,
+    Morph,
+    Morpheme,
+    MorphemeMeaning,
+    Wordform,
+    Wordform_files,
+)
+from clldutils.color import qualitative_colors
+from clldutils.loglib import get_colorlog
+from clldutils.misc import nfilter
+from pycldf import Dataset, Sources
+from slugify import slugify
+import logging
 import yawarana_sketch_clld
 from yawarana_sketch_clld import models
-from clld_document_plugin.models import Document
+
+log = get_colorlog(__name__, sys.stdout, level=logging.INFO)
 
 
 def main(args):
@@ -69,7 +74,7 @@ def main(args):
         ),
     )
 
-    print("Contributors")
+    log.info("Contributors")
     for contributor in ds.iter_rows("ContributorTable"):
         if dataset.contact is None and contributor["Email"] is not None:
             dataset.contact = contributor["Email"]
@@ -86,11 +91,11 @@ def main(args):
             common.Editor(contributor=new_cont, ord=contributor["Order"], primary=True)
         )
 
-    print("Sources")
+    log.info("Sources")
     for rec in bibtex.Database.from_file(ds.bibpath):
         data.add(common.Source, rec.id, _obj=bibtex2source(rec))
 
-    print("Languages")
+    log.info("Languages")
     for lang in ds.iter_rows("LanguageTable"):
         data.add(
             common.Language,
@@ -101,11 +106,11 @@ def main(args):
             longitude=lang["Longitude"],
         )
 
-    print("Meanings")
+    log.info("Meanings")
     for meaning in ds.iter_rows("ParameterTable"):
         data.add(Meaning, meaning["ID"], id=meaning["ID"], name=meaning["Name"])
 
-    print("Morphemes")
+    log.info("Morphemes")
     for morpheme in ds.iter_rows("MorphsetTable"):
         new_morpheme = data.add(
             Morpheme,
@@ -116,7 +121,7 @@ def main(args):
             description=" / ".join(
                 data["Meaning"][x].name for x in morpheme["Parameter_ID"]
             ),
-            comment=morpheme["Comment"]
+            comment=morpheme["Comment"],
         )
         for meaning in morpheme["Parameter_ID"]:
             data.add(
@@ -127,7 +132,7 @@ def main(args):
                 meaning=data["Meaning"][meaning],
             )
 
-    print("Morphs")
+    log.info("Morphs")
     for morph in ds.iter_rows("MorphTable"):
         data.add(
             Morph,
@@ -152,7 +157,7 @@ def main(args):
             tag_dic[tag] = f"{tagslug}-{suff}"
         return tag_dic[tag]
 
-    print("Texts")
+    log.info("Texts")
     for text in ds.iter_rows("TextTable"):
         tags = text["Metadata"].pop("tags", [])
         new_text = data.add(
@@ -168,7 +173,7 @@ def main(args):
                 data.add(Tag, tag, id=tag, name=tag)
             data.add(TextTag, text["ID"] + tag, tag=data["Tag"][tag], text=new_text)
 
-    print("Sentences")
+    log.info("Sentences")
     for ex in ds.iter_rows("ExampleTable"):
         new_ex = data.add(
             common.Sentence,
@@ -208,13 +213,13 @@ def main(args):
                 )
             )
 
-    print("Phonemes")
+    log.info("Phonemes")
     phoneme_dict = {}
     for pnm in ds.iter_rows("PhonemeTable"):
         phoneme_dict[pnm["Name"]] = pnm["ID"]
         data.add(models.Phoneme, pnm["ID"], id=pnm["ID"], name=pnm["Name"])
 
-    print("Parts of speech")
+    log.info("Parts of speech")
     for pos in ds.iter_rows("POSTable"):
         data.add(
             POS,
@@ -224,7 +229,7 @@ def main(args):
             description=pos["Description"],
         )
 
-    print("Wordforms")
+    log.info("Wordforms")
     for form in ds.iter_rows("FormTable"):
 
         new_form = data.add(
@@ -257,7 +262,7 @@ def main(args):
                     phoneme=data["Phoneme"][phoneme_dict[seg]],
                 )
 
-    print("Lexemes")
+    log.info("Lexemes")
     for lex in ds.iter_rows("LexemeTable"):
         data.add(
             Lexeme,
@@ -284,7 +289,7 @@ def main(args):
             lexeme=data["Lexeme"][lexmorph["Lexeme_ID"]],
         )
 
-    print("Inflected forms")
+    log.info("Inflected forms")
     for form in ds.iter_rows("InflectionTable"):
         data.add(
             Inflection,
@@ -293,7 +298,7 @@ def main(args):
             form=data["Wordform"][form["Form_ID"]],
         )
 
-    print("Audio")
+    log.info("Audio")
     for audio in ds.iter_rows("MediaTable"):
         if audio["ID"] in data["Sentence"]:
             sentence_file = common.Sentence_files(
@@ -316,7 +321,7 @@ def main(args):
             DBSession.flush()
             DBSession.refresh(form_file)
 
-    print("Form slices")
+    log.info("Form slices")
     for mf in ds.iter_rows("FormSlices"):
         morph = data["Morph"][mf["Morph_ID"]]
         morpheme = morph.morpheme
@@ -336,8 +341,14 @@ def main(args):
         else:
             print(mf)
 
-    print("Sentence slices")
+    log.info("Sentence slices")
     for sf in ds.iter_rows("ExampleSlices"):
+        if sf["Form_ID"] + "-" + sf["Parameter_ID"] not in data["FormMeaning"]:
+            log.warning(
+                "This sentence slice's form ID is not associated with a meaning"
+            )
+            log.warning(sf)
+            continue
         data.add(
             SentenceSlice,
             sf["ID"],
@@ -347,7 +358,7 @@ def main(args):
             form_meaning=data["FormMeaning"][sf["Form_ID"] + "-" + sf["Parameter_ID"]],
         )
 
-    print("Documents")
+    log.info("Documents")
     chapters = {}
     for chapter in ds.iter_rows("ChapterTable"):
         if chapter["ID"] == "landingpage":
