@@ -231,7 +231,6 @@ def main(args):
 
     log.info("Wordforms")
     for form in ds.iter_rows("FormTable"):
-
         new_form = data.add(
             Wordform,
             form["ID"],
@@ -245,6 +244,8 @@ def main(args):
         )
         if form["POS"] is not None:
             new_form.pos = data["POS"][form["POS"]]
+        if len(form["Source"]) > 0:
+            new_form.source = data["Source"][form["Source"][0]]
 
         for meaning in form["Parameter_ID"]:
             data.add(
