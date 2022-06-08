@@ -32,6 +32,16 @@ def render_morpheme(req, objid, **kwargs):
         md_str += f" ‘{', '.join(meanings)}’"
     return md_str
 
+def render_wf(req, objid, **kwargs):
+    wf = DBSession.query(Wordform).filter(Wordform.id == objid).first()
+    url = req.route_url("wordform", id=objid, **kwargs)
+    with_translation = "no_translation" not in kwargs
+    md_str = f"*[{wf.name}]({url})*"
+    if with_translation:
+        meanings = [x.meaning.name for x in wf.meanings]
+        md_str += f" ‘{', '.join(meanings)}’"
+    return md_str
+
 custom_model_map = {
     "MorphTable": {"route": "morph", "model": Morph, "decorate": lambda x: f"*{x}*"},
     "MorphsetTable": {
@@ -45,4 +55,4 @@ custom_model_map = {
     "ChapterTable": {"route": "document", "model": Document},
     "PhonemeTable": {"route": "phoneme", "model": Phoneme, "decorate": lambda x: f"/{x}/"},
 }
-custom_function_map = {"ExampleTable": my_render_ex, "MorphsetTable": render_morpheme}
+custom_function_map = {"ExampleTable": my_render_ex, "MorphsetTable": render_morpheme, "FormTable": render_wf}

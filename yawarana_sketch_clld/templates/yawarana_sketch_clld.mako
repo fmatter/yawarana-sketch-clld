@@ -33,4 +33,4 @@ ${next.body()}
 number_examples()
 </script>
 
-## <script type="text/javascript" src="https://livejs.com/live.js"></script>
+<script type="text/javascript" src="https://livejs.com/live.js"></script>
