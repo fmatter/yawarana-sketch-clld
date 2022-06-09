@@ -265,7 +265,7 @@ def main(args):
 
     log.info("Lexemes")
     for lex in ds.iter_rows("LexemeTable"):
-        data.add(
+        new_lex = data.add(
             Lexeme,
             lex["ID"],
             id=lex["ID"],
@@ -273,6 +273,8 @@ def main(args):
             description=lex["Description"],
             language=data["Language"][lex["Language_ID"]],
         )
+        if lex["ID"] in data["Morpheme"]:
+            new_lex.root_morpheme = data["Morpheme"][lex["ID"]]
 
     for lexlex in ds.iter_rows("LexemeLexemeParts"):
         data.add(
