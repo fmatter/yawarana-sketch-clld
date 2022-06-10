@@ -272,6 +272,7 @@ def main(args):
             name=lex["Name"],
             description=lex["Description"],
             language=data["Language"][lex["Language_ID"]],
+            comment=lex["Comment"]
         )
         if lex["ID"] in data["Morpheme"]:
             new_lex.root_morpheme = data["Morpheme"][lex["ID"]]
@@ -331,6 +332,7 @@ def main(args):
         morpheme_meaning_id = f"{morpheme.id}-{mf['Morpheme_Meaning']}"
         form = data["Wordform"][mf["Form_ID"]]
         form_meaning_id = f"{form.id}-{mf['Form_Meaning']}"
+
         new_slice = data.add(
             FormSlice,
             mf["ID"],
