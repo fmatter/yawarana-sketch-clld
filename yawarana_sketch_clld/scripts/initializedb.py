@@ -1,7 +1,4 @@
-import collections
-import itertools
 import sys
-
 from clld.cliutil import Data, bibtex2source
 from clld.db.meta import DBSession
 from clld.db.models import common
@@ -30,10 +27,8 @@ from clld_morphology_plugin.models import (
     Wordform,
     Wordform_files,
 )
-from clldutils.color import qualitative_colors
 from clldutils.loglib import get_colorlog
-from clldutils.misc import nfilter
-from pycldf import Dataset, Sources
+from pycldf import Sources
 from slugify import slugify
 import logging
 import yawarana_sketch_clld
@@ -64,7 +59,7 @@ def main(args):
         yawarana_sketch_clld.__name__,
         id=yawarana_sketch_clld.__name__,
         name=ds.properties["dc:title"],
-        domain=ds.properties["dc:identifier"].split("://")[1],
+        domain=ds.properties.get("dc:identifier", "://").split("://")[1],
         publisher_name="",
         publisher_place="",
         publisher_url="",
@@ -74,22 +69,24 @@ def main(args):
         ),
     )
 
-    log.info("Contributors")
-    for contributor in ds.iter_rows("ContributorTable"):
-        if dataset.contact is None and contributor["Email"] is not None:
-            dataset.contact = contributor["Email"]
 
-        new_cont = data.add(
-            common.Contributor,
-            contributor["ID"],
-            id=contributor["ID"],
-            name=contributor["Name"],
-            email=contributor["Email"],
-            url=contributor["Url"],
-        )
-        dataset.editors.append(
-            common.Editor(contributor=new_cont, ord=contributor["Order"], primary=True)
-        )
+    if "ContributorTable" in ds.components:
+        log.info("Contributors")
+        for contributor in ds.iter_rows("ContributorTable"):
+            if dataset.contact is None and contributor["Email"] is not None:
+                dataset.contact = contributor["Email"]
+    
+            new_cont = data.add(
+                common.Contributor,
+                contributor["ID"],
+                id=contributor["ID"],
+                name=contributor["Name"],
+                email=contributor["Email"],
+                url=contributor["Url"],
+            )
+            dataset.editors.append(
+                common.Editor(contributor=new_cont, ord=contributor["Order"], primary=True)
+            )
 
     log.info("Sources")
     for rec in bibtex.Database.from_file(ds.bibpath):
@@ -272,7 +269,7 @@ def main(args):
             name=lex["Name"],
             description=lex["Description"],
             language=data["Language"][lex["Language_ID"]],
-            comment=lex["Comment"]
+            comment=lex["Comment"],
         )
         if lex["ID"] in data["Morpheme"]:
             new_lex.root_morpheme = data["Morpheme"][lex["ID"]]
@@ -363,29 +360,31 @@ def main(args):
             form_meaning=data["FormMeaning"][sf["Form_ID"] + "-" + sf["Parameter_ID"]],
         )
 
-    log.info("Documents")
-    chapters = {}
-    for chapter in ds.iter_rows("ChapterTable"):
-        if chapter["ID"] == "landingpage":
-            dataset.description = chapter["Description"]
-
-        else:
-            ch = data.add(
-                Document,
-                chapter["ID"],
-                id=chapter["ID"],
-                name=chapter["Name"],
-                description=chapter["Description"],
-            )
-            if chapter["Number"] is not None:
-                ch.chapter_no = int(chapter["Number"])
-                ch.order = chr(int(chapter["Number"]) + 96)
-                chapters[ch.chapter_no] = ch
+    if "ChapterTable" in ds.components:
+        log.info("Documents")
+        chapters = {}
+        for chapter in ds.iter_rows("ChapterTable"):
+            if chapter["ID"] == "landingpage":
+                dataset.description = chapter["Description"]
             else:
-                ch.order = "zzz"
-    for nr, chapter in chapters.items():
-        if 1 < nr:
-            chapter.preceding = chapters[nr - 1]
+                ch = data.add(
+                    Document,
+                    chapter["ID"],
+                    id=chapter["ID"],
+                    name=chapter["Name"],
+                    description=chapter["Description"],
+                )
+                if chapter["Number"] is not None:
+                    ch.chapter_no = int(chapter["Number"])
+                    ch.order = chr(int(chapter["Number"]) + 96)
+                    chapters[ch.chapter_no] = ch
+                else:
+                    ch.order = "zzz"
+        for nr, chapter in chapters.items():
+            if 1 < nr:
+                chapter.preceding = chapters[nr - 1]
+    else:
+        dataset.description="This is just the corpus version."
 
 
 def prime_cache(args):
