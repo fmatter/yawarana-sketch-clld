@@ -360,31 +360,31 @@ def main(args):
             form_meaning=data["FormMeaning"][sf["Form_ID"] + "-" + sf["Parameter_ID"]],
         )
 
-    if "ChapterTable" in ds.components:
-        log.info("Documents")
-        chapters = {}
-        for chapter in ds.iter_rows("ChapterTable"):
-            if chapter["ID"] == "landingpage":
-                dataset.description = chapter["Description"]
+    # if "ChapterTable" in ds.components:
+    log.info("Documents")
+    chapters = {}
+    for chapter in ds.iter_rows("ChapterTable"):
+        if chapter["ID"] == "landingpage":
+            dataset.description = chapter["Description"]
+        else:
+            ch = data.add(
+                Document,
+                chapter["ID"],
+                id=chapter["ID"],
+                name=chapter["Name"],
+                description=chapter["Description"],
+            )
+            if chapter["Number"] is not None:
+                ch.chapter_no = int(chapter["Number"])
+                ch.order = chr(int(chapter["Number"]) + 96)
+                chapters[ch.chapter_no] = ch
             else:
-                ch = data.add(
-                    Document,
-                    chapter["ID"],
-                    id=chapter["ID"],
-                    name=chapter["Name"],
-                    description=chapter["Description"],
-                )
-                if chapter["Number"] is not None:
-                    ch.chapter_no = int(chapter["Number"])
-                    ch.order = chr(int(chapter["Number"]) + 96)
-                    chapters[ch.chapter_no] = ch
-                else:
-                    ch.order = "zzz"
-        for nr, chapter in chapters.items():
-            if 1 < nr:
-                chapter.preceding = chapters[nr - 1]
-    else:
-        dataset.description="This is just the corpus version."
+                ch.order = "zzz"
+    for nr, chapter in chapters.items():
+        if 1 < nr:
+            chapter.preceding = chapters[nr - 1]
+    # else:
+        # dataset.description="This is just the corpus version."
 
 
 def prime_cache(args):
