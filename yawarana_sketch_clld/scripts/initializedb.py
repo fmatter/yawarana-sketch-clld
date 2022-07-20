@@ -361,14 +361,11 @@ def main(args):
             form_meaning=data["FormMeaning"][sf["Form_ID"] + "-" + sf["Parameter_ID"]],
         )
 
-    # log.debug(ds.components.keys())
-    if "ChapterTable" in ds.components:
+    if "ChapterTable" in [str(x.url) for x in ds.tables]:
         log.info("Documents")
         chapters = {}
         for chapter in ds.iter_rows("ChapterTable"):
-            log.debug(chapter)
             if chapter["ID"] == "landingpage":
-                print(chapter["Description"])
                 dataset.description = chapter["Description"]
             else:
                 ch = data.add(
@@ -387,8 +384,24 @@ def main(args):
         for nr, chapter in chapters.items():
             if 1 < nr:
                 chapter.preceding = chapters[nr - 1]
-        else:
-            dataset.description = "This is just the corpus version."
+    else:
+        dataset.description = "This is just the corpus version."
+
+    # # adding a presentation
+    # slide_content = open(
+    #     "/home/florianm/Dropbox/research/cariban/yawarana/papers/optional_ergative/yawarana-ergative-slides/output/clld/content.txt",
+    #     "r",
+    #     encoding="utf-8",
+    # ).read()
+    # slides = data.add(
+    #     Document,
+    #     "ergative-slides",
+    #     id="ergative-slides",
+    #     name="Ergativity",
+    #     description=slide_content,
+    #     order="zzzzz",
+    #     kind="slides"
+    # )
 
 
 def prime_cache(args):
