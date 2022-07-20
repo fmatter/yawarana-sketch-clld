@@ -34,7 +34,7 @@ import logging
 import yawarana_sketch_clld
 from yawarana_sketch_clld import models
 
-log = get_colorlog(__name__, sys.stdout, level=logging.INFO)
+log = get_colorlog(__name__, sys.stdout, level=logging.DEBUG)
 
 
 def main(args):
@@ -69,13 +69,12 @@ def main(args):
         ),
     )
 
-
     if "ContributorTable" in ds.components:
         log.info("Contributors")
         for contributor in ds.iter_rows("ContributorTable"):
             if dataset.contact is None and contributor["Email"] is not None:
                 dataset.contact = contributor["Email"]
-    
+
             new_cont = data.add(
                 common.Contributor,
                 contributor["ID"],
@@ -85,7 +84,9 @@ def main(args):
                 url=contributor["Url"],
             )
             dataset.editors.append(
-                common.Editor(contributor=new_cont, ord=contributor["Order"], primary=True)
+                common.Editor(
+                    contributor=new_cont, ord=contributor["Order"], primary=True
+                )
             )
 
     log.info("Sources")
@@ -360,11 +361,14 @@ def main(args):
             form_meaning=data["FormMeaning"][sf["Form_ID"] + "-" + sf["Parameter_ID"]],
         )
 
+    # log.debug(ds.components.keys())
     if "ChapterTable" in ds.components:
         log.info("Documents")
         chapters = {}
         for chapter in ds.iter_rows("ChapterTable"):
+            log.debug(chapter)
             if chapter["ID"] == "landingpage":
+                print(chapter["Description"])
                 dataset.description = chapter["Description"]
             else:
                 ch = data.add(
@@ -384,7 +388,7 @@ def main(args):
             if 1 < nr:
                 chapter.preceding = chapters[nr - 1]
         else:
-            dataset.description="This is just the corpus version."
+            dataset.description = "This is just the corpus version."
 
 
 def prime_cache(args):
