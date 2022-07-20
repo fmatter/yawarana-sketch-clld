@@ -40,7 +40,7 @@ log = get_colorlog(__name__, sys.stdout, level=logging.DEBUG)
 def main(args):
 
     ds = args.cldf
-
+    ds_tables = list(ds.components.keys()) + [str(x.url) for x in ds.tables]
     license_dic = {
         "creativecommons.org/licenses/by/4.0": {
             "license_icon": "cc-by.png",
@@ -69,7 +69,7 @@ def main(args):
         ),
     )
 
-    if "ContributorTable" in ds.components:
+    if "ContributorTable" in ds_tables:
         log.info("Contributors")
         for contributor in ds.iter_rows("ContributorTable"):
             if dataset.contact is None and contributor["Email"] is not None:
@@ -361,7 +361,7 @@ def main(args):
             form_meaning=data["FormMeaning"][sf["Form_ID"] + "-" + sf["Parameter_ID"]],
         )
 
-    if "ChapterTable" in [str(x.url) for x in ds.tables]:
+    if "ChapterTable" in ds_tables:
         log.info("Documents")
         chapters = {}
         for chapter in ds.iter_rows("ChapterTable"):
