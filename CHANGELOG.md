@@ -17,6 +17,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.2] -- 2022-06-03
 
+### Added
+* TOC
+* POS inline shortcuts
+* tags
+
+### Removed
+* `Morph` menu item
+
+### Changed
+* name
+* pseudo-chapter instead of `dc:description` for landing page
+
+### Fixed
+* licenses
+
 ## [0.0.1] - 2022-05-30
 
 Initial release.
