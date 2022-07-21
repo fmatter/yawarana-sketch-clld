@@ -8,10 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+* original (spanish) translation
+* [live.js](https://livejs.com/) for preview
+* lexemes
 
 ### Removed
 
 ### Changed
+* floating top bar
+* LFTS for all similar entities
 
 ### Fixed
 
